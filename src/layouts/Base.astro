@@ -61,6 +61,16 @@ const person = {
     <link rel="sitemap" href="/sitemap.xml" />
 
     {!noindex && <script type="application/ld+json" set:html={JSON.stringify(person)} />}
+    {
+      import.meta.env.PROD && (
+        <>
+          <script is:inline>
+            window.va = window.va || function () {(window.vaq = window.vaq || []).push(arguments);};
+          </script>
+          <script is:inline defer src="/_vercel/insights/script.js"></script>
+        </>
+      )
+    }
     <script is:inline>
       document.documentElement.classList.remove('no-js');
       try {

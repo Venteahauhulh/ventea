@@ -1,0 +1,164 @@
+---
+import { zin } from '../data/profile';
+const { layout, maxSeats, pilot } = zin;
+---
+
+<div class="seatmap" data-fare={pilot.fare} data-max={maxSeats}>
+  <div class="head">
+    <span>Front</span>
+    <span class="hint">Tap seats · up to {maxSeats}</span>
+  </div>
+  <div class="body">
+    <div class="glass" aria-hidden="true"></div>
+    {
+      layout.map((row, r) => (
+        <div class:list={['row', { gap: r === 1 }]}>
+          {row.map((cell) =>
+            cell === null ? (
+              <span class="cell empty" aria-hidden="true" />
+            ) : cell === 'driver' ? (
+              <span class="cell driver" aria-hidden="true">
+                Driver
+              </span>
+            ) : (
+              <button type="button" class="cell seat" data-seat={cell} aria-pressed="false" aria-label={`Seat ${cell}`}>
+                {cell}
+              </button>
+            )
+          )}
+        </div>
+      ))
+    }
+  </div>
+  <div class="foot" aria-live="polite">
+    <span class="sel">No seat selected</span>
+    <span class="sum">₹0</span>
+  </div>
+</div>
+
+<style>
+  .seatmap {
+    --s: clamp(44px, 12vw, 64px);
+    width: max-content;
+    max-width: 100%;
+    color: var(--zin-ink);
+  }
+  .head,
+  .foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: var(--step--1);
+  }
+  .head {
+    margin-bottom: 10px;
+  }
+  .hint {
+    opacity: 0.6;
+  }
+  .body {
+    position: relative;
+    display: grid;
+    gap: 10px;
+    padding: 28px 18px 18px;
+    border: 1.5px solid var(--zin-ink);
+    border-radius: 28px 28px 14px 14px;
+  }
+  .glass {
+    position: absolute;
+    top: 9px;
+    left: 22%;
+    right: 22%;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--zin-ink);
+    opacity: 0.85;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: repeat(4, var(--s));
+    gap: 10px;
+  }
+  .row.gap {
+    margin-top: 10px;
+  }
+  .cell {
+    height: var(--s);
+    display: grid;
+    place-items: center;
+    border-radius: 10px 10px 6px 6px;
+    font: inherit;
+    font-size: var(--step-0);
+    font-variation-settings: 'wdth' 110;
+    font-weight: 600;
+  }
+  .driver {
+    font-size: 0.7rem;
+    font-weight: 500;
+    background: repeating-linear-gradient(-45deg, transparent 0 5px, rgb(17 17 16 / 0.18) 5px 6px);
+    border: 1.5px solid rgb(17 17 16 / 0.35);
+  }
+  .seat {
+    cursor: pointer;
+    color: var(--zin-ink);
+    background: transparent;
+    border: 1.5px solid var(--zin-ink);
+    transition:
+      background 0.25s var(--ease),
+      color 0.25s var(--ease),
+      transform 0.25s var(--ease);
+  }
+  .seat:hover {
+    transform: translateY(-2px);
+  }
+  .seat[aria-pressed='true'] {
+    background: var(--zin-ink);
+    color: var(--zin);
+  }
+  .seat.nope {
+    animation: nope 0.35s;
+  }
+  @keyframes nope {
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+  .foot {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1.5px solid var(--zin-ink);
+  }
+  .sum {
+    font-weight: 700;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.seatmap').forEach((root) => {
+    const fare = Number(root.dataset.fare);
+    const max = Number(root.dataset.max);
+    const sel = root.querySelector('.sel')!;
+    const sum = root.querySelector('.sum')!;
+    const picked = new Set<number>();
+    const fmt = new Intl.NumberFormat('en-IN');
+
+    root.querySelectorAll<HTMLButtonElement>('.seat').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const n = Number(btn.dataset.seat);
+        if (picked.has(n)) picked.delete(n);
+        else if (picked.size >= max) {
+          btn.classList.remove('nope');
+          void btn.offsetWidth;
+          btn.classList.add('nope');
+          sel.textContent = `Max ${max} seats per booking`;
+          return;
+        } else picked.add(n);
+        btn.setAttribute('aria-pressed', String(picked.has(n)));
+        const list = [...picked].sort((a, b) => a - b);
+        sel.textContent = list.length
+          ? `${list.length === 1 ? 'Seat' : 'Seats'} ${list.join(', ')}`
+          : 'No seat selected';
+        sum.textContent = `₹${fmt.format(list.length * fare)}`;
+      });
+    });
+  });
+</script>

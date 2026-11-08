@@ -6,6 +6,7 @@
   --ink-2: #5d5b55;
   --line: #cfccc3;
   --accent: #ff4f00;
+  --accent-text: #b83a00;
   --zin: #fdd92c;
   --zin-ink: #111110;
 
@@ -26,6 +27,7 @@
     --ink: #ecebe6;
     --ink-2: #9a978f;
     --line: #2e2d2a;
+    --accent-text: #ff4f00;
     color-scheme: dark;
   }
 }
@@ -34,6 +36,7 @@
   --ink: #ecebe6;
   --ink-2: #9a978f;
   --line: #2e2d2a;
+  --accent-text: #ff4f00;
   color-scheme: dark;
 }
 

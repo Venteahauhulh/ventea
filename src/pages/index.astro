@@ -8,7 +8,7 @@ const year = new Date().getFullYear();
 ---
 
 <Base
-  title={`${profile.nickname} — ${profile.name}`}
+  title={`${profile.name} (${profile.nickname}) — ${profile.role}, Aizawl`}
   description={`${profile.name} (${profile.nickname}), ${profile.role.toLowerCase()} in ${profile.location}.`}
 >
   <header class="top wrap grid">
@@ -51,7 +51,7 @@ const year = new Date().getFullYear();
         </p>
         <figure class="hm-c">
           <div class="ph">
-            <img src={profile.photo} alt={`${profile.nickname} as a small child, walking across a bridge in a yellow hoodie`} width="640" height="640" loading="eager" />
+            <img src={profile.photo} srcset={`/me/ventea-child-360.jpeg 360w, ${profile.photo} 640w`} sizes="(max-width: 860px) 260px, 25vw" alt={`${profile.nickname} as a small child, walking across a bridge in a yellow hoodie`} width="640" height="640" loading="eager" />
           </div>
           <figcaption>{profile.bio}</figcaption>
         </figure>
@@ -69,7 +69,7 @@ const year = new Date().getFullYear();
         <div class="wrap grid z-top">
           <div class="z-intro">
             <div class="z-title rv">
-              <img src="/zin/logo.png" alt="Zin app icon" width="88" height="88" class="z-logo" />
+              <img src="/zin/logo.webp" alt="Zin app icon" width="88" height="88" class="z-logo" />
               <h3 class="z-name">Zin</h3>
             </div>
             <p class="z-line rv">{zin.line}</p>
@@ -290,7 +290,7 @@ const year = new Date().getFullYear();
 
   /* ---------- Hero ---------- */
   .hero {
-    min-height: calc(100svh - 52px);
+    min-height: min(calc(100svh - 52px), 1000px);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -418,7 +418,7 @@ const year = new Date().getFullYear();
   .sec-n {
     grid-column: 1 / span 3;
     font-size: var(--step--1);
-    color: var(--accent);
+    color: var(--accent-text);
     font-weight: 600;
   }
   .sec-t {
@@ -662,7 +662,7 @@ const year = new Date().getFullYear();
   }
   .r-points li::before {
     content: '— ';
-    color: var(--accent);
+    color: var(--accent-text);
   }
   .r-grade {
     color: var(--ink);

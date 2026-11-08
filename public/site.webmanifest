@@ -1,0 +1,8 @@
+{
+  "name": "Ventea — H Vanlalvenhima",
+  "short_name": "Ventea",
+  "icons": [{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }],
+  "theme_color": "#111110",
+  "background_color": "#efede7",
+  "display": "browser"
+}

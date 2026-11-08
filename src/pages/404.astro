@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import { profile } from '../data/profile';
+---
+
+<Base title={`Page not found — ${profile.nickname}`} description="This page does not exist." noindex>
+  <main class="nf wrap">
+    <a href="/" class="label u-link">{profile.name}</a>
+    <h1 class="code">404</h1>
+    <div class="row">
+      <p>This page doesn’t exist. Maybe it took the last Sumo.</p>
+      <a href="/" class="u-link">Back to the homepage</a>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .nf {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-block: 18px 32px;
+  }
+  .nf > a {
+    align-self: flex-start;
+  }
+  .code {
+    font-size: clamp(8rem, 38vw, 34rem);
+    line-height: 0.8;
+    font-weight: 820;
+    font-variation-settings: 'wdth' 125;
+    letter-spacing: -0.04em;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid var(--ink);
+    font-size: var(--step-1);
+  }
+</style>

@@ -1,0 +1,163 @@
+---
+import { lehkhabu } from '../data/profile';
+const { payout, prices, defaultPrice } = lehkhabu;
+---
+
+<div
+  class="split"
+  data-gst={payout.gstPct}
+  data-store={payout.storeFeePct}
+  data-share={payout.sharePct}
+>
+  <div class="prices" role="group" aria-label="Book price">
+    {
+      prices.map((p) => (
+        <button type="button" data-price={p} aria-pressed={String(p === defaultPrice)}>
+          ₹{p}
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="bar" aria-hidden="true">
+    <span class="seg s-pub"></span>
+    <span class="seg s-plat"></span>
+    <span class="seg s-store"></span>
+    <span class="seg s-gst"></span>
+  </div>
+
+  <dl class="rows" aria-live="polite">
+    <div class="r-pub"><dt><i></i>Publisher ({payout.sharePct}% of net)</dt><dd data-k="pub"></dd></div>
+    <div class="r-plat"><dt><i></i>Lehkhabu ({100 - payout.sharePct}% of net)</dt><dd data-k="plat"></dd></div>
+    <div class="r-store"><dt><i></i>App store fee ({payout.storeFeePct}%)</dt><dd data-k="store"></dd></div>
+    <div class="r-gst"><dt><i></i>GST ({payout.gstPct}%, included)</dt><dd data-k="gst"></dd></div>
+  </dl>
+</div>
+
+<style>
+  .split {
+    color: var(--p-ink);
+  }
+  .prices {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .prices button {
+    font: inherit;
+    font-weight: 600;
+    font-variation-settings: 'wdth' 110;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1.5px solid var(--p-ink);
+    background: transparent;
+    color: var(--p-ink);
+    cursor: pointer;
+    transition:
+      background 0.25s var(--ease),
+      color 0.25s var(--ease);
+  }
+  .prices button[aria-pressed='true'] {
+    background: var(--p-ink);
+    color: var(--p-bg);
+  }
+  .bar {
+    display: flex;
+    height: 56px;
+    margin-top: 22px;
+    border: 1.5px solid var(--p-ink);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .seg {
+    height: 100%;
+    transition: flex-grow 0.8s var(--ease);
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .seg + .seg {
+    border-left: 1.5px solid var(--p-ink);
+  }
+  .s-pub,
+  .r-pub i {
+    background: var(--p-ink);
+  }
+  .s-plat,
+  .r-plat i {
+    background: repeating-linear-gradient(-45deg, var(--p-ink) 0 2px, transparent 2px 7px);
+  }
+  .s-store,
+  .r-store i {
+    background: repeating-linear-gradient(90deg, var(--p-ink) 0 1.5px, transparent 1.5px 6px);
+  }
+  .s-gst,
+  .r-gst i {
+    background: transparent;
+  }
+  .rows {
+    margin-top: 16px;
+    border-top: 1.5px solid var(--p-ink);
+  }
+  .rows > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding-block: 9px;
+    border-bottom: 1px solid var(--p-line);
+  }
+  dt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: var(--step--1);
+    color: var(--p-ink);
+  }
+  dt i {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--p-ink);
+    border-radius: 3px;
+  }
+  dd {
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+  }
+  .r-pub dd {
+    font-size: var(--step-1);
+    line-height: 1;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.split').forEach((root) => {
+    const gst = Number(root.dataset.gst) / 100;
+    const store = Number(root.dataset.store) / 100;
+    const share = Number(root.dataset.share) / 100;
+    const fmt = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 });
+    const seg = (k: string) => root.querySelector<HTMLElement>(`.s-${k}`)!;
+    const out = (k: string) => root.querySelector<HTMLElement>(`[data-k="${k}"]`)!;
+    const buttons = root.querySelectorAll<HTMLButtonElement>('[data-price]');
+
+    // Same formula as compute_earning_paise() in Lehkhabu's payouts.sql.
+    const show = (price: number) => {
+      const exGst = price / (1 + gst);
+      const net = exGst * (1 - store);
+      const parts = {
+        pub: Math.round(net * share * 100) / 100,
+        plat: Math.round(net * (1 - share) * 100) / 100,
+        store: Math.round(exGst * store * 100) / 100,
+        gst: Math.round((price - exGst) * 100) / 100,
+      };
+      for (const [k, v] of Object.entries(parts)) {
+        seg(k).style.flexGrow = String(v);
+        out(k).textContent = fmt.format(v);
+      }
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.price) === price)));
+    };
+
+    buttons.forEach((b) => b.addEventListener('click', () => show(Number(b.dataset.price))));
+    const start = root.querySelector<HTMLButtonElement>('[aria-pressed="true"]') ?? buttons[0];
+    show(Number(start.dataset.price));
+  });
+</script>

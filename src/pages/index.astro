@@ -1,7 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import SeatMap from '../components/SeatMap.astro';
-import { profile, experience, education, zin } from '../data/profile';
+import SaleSplit from '../components/SaleSplit.astro';
+import { profile, experience, education, zin, lehkhabu } from '../data/profile';
 
 const letters = profile.nickname.toUpperCase().split('');
 const year = new Date().getFullYear();
@@ -46,8 +47,8 @@ const year = new Date().getFullYear();
         </p>
         <p class="hm-b">
           {profile.name}, a {profile.role.toLowerCase().replace('&', 'and')} from {profile.region.split(',')[0]}.
-          Currently building <a href="#work" class="u-link">Zin</a>, a seat booking app for the Sumos that connect
-          our towns.
+          Currently building <a href="#zin" class="u-link">Zin</a>, a seat booking app for the Sumos that connect
+          our towns, and <a href="#lehkhabu" class="u-link">Lehkhabu</a>, an app for Mizo ebooks and audiobooks.
         </p>
         <figure class="hm-c">
           <div class="ph">
@@ -62,10 +63,10 @@ const year = new Date().getFullYear();
       <div class="sec-head wrap grid rv">
         <span class="sec-n">01</span>
         <h2 id="work-h" class="sec-t">Work</h2>
-        <span class="sec-c label">Selected project, 1 of 1</span>
+        <span class="sec-c label">2 projects</span>
       </div>
 
-      <article class="zin">
+      <article id="zin" class="proj zin" aria-label="Zin">
         <div class="wrap grid z-top">
           <div class="z-intro">
             <div class="z-title rv">
@@ -134,6 +135,81 @@ const year = new Date().getFullYear();
         <div class="wrap z-stat rv">
           <span class="z-num">{zin.mergedPRs}</span>
           <span class="z-numl">merged pull requests, counted {zin.countedOn}</span>
+        </div>
+      </article>
+
+      <article id="lehkhabu" class="proj lk" aria-label="Lehkhabu">
+        <div class="wrap grid z-top">
+          <div class="z-intro">
+            <div class="z-title rv">
+              <img src="/lehkhabu/logo.webp" alt="Lehkhabu app icon" width="88" height="88" class="z-logo" />
+              <h3 class="z-name lk-name">{lehkhabu.name}</h3>
+            </div>
+            <p class="z-line rv">{lehkhabu.line}</p>
+            <p class="z-sum rv">{lehkhabu.summary}</p>
+            <dl class="z-facts rv">
+              {
+                lehkhabu.facts.map(([k, v]) => (
+                  <div>
+                    <dt>{k}</dt>
+                    <dd>{v}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          <aside class="z-demo rv" aria-label="Where the money from one sale goes">
+            <p class="z-cap">Where one sale goes. Pick a price; the split uses the app’s own payout formula.</p>
+            <SaleSplit />
+            <p class="z-note">
+              Default settings, adjustable by an admin. Earnings are held {lehkhabu.payout.holdDays} days, then paid
+              out once a publisher’s balance reaches ₹{lehkhabu.payout.minPayout}.
+            </p>
+          </aside>
+        </div>
+
+        <div class="wrap grid z-bottom">
+          <div class="z-col z-built rv">
+            <h4 class="z-h">What I built</h4>
+            <ol>{lehkhabu.built.map((b) => <li>{b}</li>)}</ol>
+          </div>
+          <div class="z-col z-stack rv">
+            <h4 class="z-h">Stack</h4>
+            <dl>
+              {
+                lehkhabu.stack.map(([k, v]) => (
+                  <div>
+                    <dt>{k}</dt>
+                    <dd>{v}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+          <div class="z-col z-rules rv">
+            <h4 class="z-h">Formats</h4>
+            <dl class="lk-formats">
+              {
+                lehkhabu.formats.map(([k, v]) => (
+                  <div>
+                    <dt>{k}</dt>
+                    <dd>{v}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+            <h4 class="z-h lk-wf-h">Book review</h4>
+            <ol class="lk-wf">
+              {lehkhabu.workflow.map((w) => <li>{w}</li>)}
+            </ol>
+            <p class="z-note">Rejected books go back to the publisher to edit and resubmit.</p>
+          </div>
+        </div>
+
+        <div class="wrap z-stat rv">
+          <span class="z-num">{lehkhabu.commits}</span>
+          <span class="z-numl">commits, {lehkhabu.period}</span>
         </div>
       </article>
     </section>
@@ -448,15 +524,27 @@ const year = new Date().getFullYear();
 
   /* ---------- Zin ---------- */
   .zin {
-    --ink: var(--zin-ink);
-    --ink-2: rgb(17 17 16 / 0.66);
-    background: var(--zin);
-    color: var(--zin-ink);
+    --p-bg: var(--zin);
+    --p-ink: var(--zin-ink);
+    --p-ink-2: rgb(17 17 16 / 0.66);
+    --p-line: var(--p-line);
+  }
+  .lk {
+    --p-bg: #385ce0;
+    --p-ink: #ffffff;
+    --p-ink-2: rgb(255 255 255 / 0.84);
+    --p-line: rgb(255 255 255 / 0.3);
+  }
+  .proj {
+    --ink: var(--p-ink);
+    --ink-2: var(--p-ink-2);
+    background: var(--p-bg);
+    color: var(--p-ink);
     padding-block: clamp(36px, 6vw, 88px);
   }
-  .zin ::selection {
-    background: var(--zin-ink);
-    color: var(--zin);
+  .proj ::selection {
+    background: var(--p-ink);
+    color: var(--p-bg);
   }
   .z-top {
     row-gap: 48px;
@@ -473,7 +561,7 @@ const year = new Date().getFullYear();
     width: clamp(56px, 7vw, 96px);
     height: auto;
     border-radius: 22%;
-    outline: 1.5px solid var(--zin-ink);
+    outline: 1.5px solid var(--p-ink);
     margin-bottom: 0.9vw;
   }
   .z-name {
@@ -482,6 +570,45 @@ const year = new Date().getFullYear();
     font-weight: 850;
     font-variation-settings: 'wdth' 125;
     letter-spacing: -0.05em;
+  }
+  /* "Lehkhabu" is 8 letters: sized so it fits beside the icon in its column. */
+  .lk-name {
+    font-size: 7.4vw;
+    letter-spacing: -0.04em;
+  }
+  @media (max-width: 960px) {
+    .lk-name {
+      /* width left after the page gutters and the icon, shared by 8 wide letters */
+      font-size: calc((100vw - 2 * var(--gutter) - 100px) / 6);
+    }
+  }
+  .lk-formats > div {
+    padding-block: 7px;
+    border-bottom: 1px solid var(--p-line);
+  }
+  .lk-formats dt {
+    color: var(--p-ink);
+    font-weight: 600;
+    font-size: var(--step-0);
+  }
+  .lk-formats dd {
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  .z-h.lk-wf-h {
+    margin-top: 28px;
+  }
+  .lk-wf {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 0;
+    font-weight: 600;
+  }
+  .lk-wf li + li::before {
+    content: '→';
+    margin-inline: 8px;
+    font-weight: 400;
   }
   .z-line {
     margin-top: clamp(20px, 3vw, 40px);
@@ -501,12 +628,12 @@ const year = new Date().getFullYear();
     margin-top: clamp(28px, 4vw, 48px);
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    border-top: 1.5px solid var(--zin-ink);
+    border-top: 1.5px solid var(--p-ink);
     max-width: 640px;
   }
   .z-facts > div {
     padding: 12px 16px 12px 0;
-    border-bottom: 1px solid rgb(17 17 16 / 0.25);
+    border-bottom: 1px solid var(--p-line);
   }
   dt {
     font-size: var(--step--1);
@@ -531,13 +658,13 @@ const year = new Date().getFullYear();
   }
   .z-routes {
     margin-top: 28px;
-    border-top: 1.5px solid var(--zin-ink);
+    border-top: 1.5px solid var(--p-ink);
   }
   .z-routes li {
     display: grid;
     grid-template-columns: 1fr auto;
     padding-block: 10px;
-    border-bottom: 1px solid rgb(17 17 16 / 0.25);
+    border-bottom: 1px solid var(--p-line);
   }
   .rt {
     font-weight: 650;
@@ -556,7 +683,7 @@ const year = new Date().getFullYear();
     row-gap: 40px;
   }
   .z-col {
-    border-top: 1.5px solid var(--zin-ink);
+    border-top: 1.5px solid var(--p-ink);
     padding-top: 14px;
   }
   .z-built {
@@ -593,7 +720,7 @@ const year = new Date().getFullYear();
   }
   .z-rules li {
     padding-block: 7px;
-    border-bottom: 1px solid rgb(17 17 16 / 0.25);
+    border-bottom: 1px solid var(--p-line);
   }
   .z-stat {
     margin-top: clamp(48px, 7vw, 96px);

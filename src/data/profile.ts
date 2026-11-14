@@ -108,3 +108,45 @@ export const zin = {
   mergedPRs: 29,
   countedOn: '8 Nov 2026',
 };
+
+// Lehkhabu: facts from the README, database schema, payout SQL and git history of the private repo.
+export const lehkhabu = {
+  name: 'Lehkhabu',
+  line: 'Mizo ebooks and audiobooks.',
+  summary:
+    'A reading app for Android and iOS: literature, poetry, history, comics and textbooks in Mizo. Authors and publishers upload their books through a web dashboard, an admin reviews them, and publishers are paid their share of every sale.',
+  facts: [
+    ['Role', 'Solo — app, dashboard, backend'],
+    ['Platform', 'Android & iOS, web dashboard'],
+    ['Status', 'In development'],
+    ['Repository', 'Private'],
+  ] as [string, string][],
+  formats: [
+    ['EPUB', 'Reflowable text, font size, dark mode'],
+    ['PDF', 'Textbooks and scanned books, zoom'],
+    ['Comics', 'Image pages, swipe and pinch zoom'],
+    ['Audio', 'Chapters, lock-screen playback, speed, sleep timer'],
+  ] as [string, string][],
+  stack: [
+    ['App', 'React Native, Expo Router, TypeScript, Zustand'],
+    ['Dashboard', 'React, Vite, React Router'],
+    ['Backend', 'Supabase: Postgres, Auth, Storage, Edge Functions'],
+    ['Payments', 'RevenueCat (store purchases), RazorpayX (payouts)'],
+    ['Checks', 'GitHub Actions CI and a pre-push hook'],
+  ] as [string, string][],
+  built: [
+    'Three readers in one app: EPUB, PDF and comics, plus a full audiobook player',
+    'Publisher dashboard with a review workflow and versioned updates to published books',
+    'Purchases verified by a server webhook before a book unlocks',
+    'Private storage: book files are served only through signed links, to buyers',
+    'Publisher payouts with a holding period, batches and admin approval',
+    'Mizo by default, English optional; in-app account deletion and privacy pages',
+  ],
+  workflow: ['Draft', 'In review', 'Published'],
+  // Default payout settings from payouts.sql. An admin can change them.
+  payout: { gstPct: 18, storeFeePct: 15, sharePct: 70, holdDays: 45, minPayout: 500 },
+  prices: [29, 49, 99, 199],
+  defaultPrice: 99,
+  commits: 19,
+  period: '10–14 Nov 2026',
+};
